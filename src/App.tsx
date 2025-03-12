@@ -1,24 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
 function App() {
+  const handleClickKakaoLogin = () => {
+    const href = window.location.href;
+    const [protocol, url] = href.split('://');
+    const state = `${protocol}://${url.split('/').shift()}/kakao`;
+
+    window.location.href = `http://localhost:4000/auth/kakao?state=${state}`;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={handleClickKakaoLogin}>카카오 로그인</button>
     </div>
   );
 }
