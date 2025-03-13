@@ -1,12 +1,14 @@
 import KakaoPage from './pages/Auth/Kakao';
 
+import { LINK_FORCE_API_URL } from './persistent/config';
+
 function App() {
   const handleClickKakaoLogin = () => {
     const href = window.location.href;
     const [protocol, url] = href.split('://');
     const state = `${protocol}://${url.split('/').shift()}/auth/kakao`;
 
-    window.location.href = `http://localhost:4000/auth/kakao?state=${state}`;
+    window.location.href = `${LINK_FORCE_API_URL}/auth/kakao?state=${state}`;
   };
 
   return (
