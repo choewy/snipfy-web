@@ -1,13 +1,18 @@
-import { LINK_FORCE_API_URL } from '../persistent/config';
+import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { SignApi } from '../api/SignApi';
 
 export default function LoginPage() {
-  const handleClickKakaoLogin = () => {
-    const href = window.location.href;
-    const [protocol, url] = href.split('://');
-    const state = `${protocol}://${url.split('/').shift()}/kakao`;
+  const navigate = useNavigate();
 
-    window.location.href = `${LINK_FORCE_API_URL}/auth/kakao?state=${state}`;
-  };
+  const handleClickKakaoLogin = useCallback(async () => {
+    try {
+      const { data } = await SignApi.getSocialLoginPageURL();
+
+      navigate(data.url, { replace: true });
+    } catch (e) {}
+  }, [navigate]);
 
   return (
     <div>
