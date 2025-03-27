@@ -1,22 +1,26 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { SignApi } from '../api/SignApi';
+import { SocialPlatform } from '../persistent/enums';
 
 export default function LoginPage() {
-  const navigate = useNavigate();
+  const handleClickSocialLogin = (platform: SocialPlatform) => {
+    return async () => {
+      await SignApi.getSocialLoginPageUrl(platform).then((response) => {
+        const url = response.data?.data?.url;
 
-  const handleClickKakaoLogin = useCallback(async () => {
-    try {
-      const { data } = await SignApi.getSocialLoginPageURL();
+        if (!url) {
+          throw new Error();
+        }
 
-      navigate(data.url, { replace: true });
-    } catch (e) {}
-  }, [navigate]);
+        window.location.href = url;
+      });
+    };
+  };
 
   return (
     <div>
-      <button onClick={handleClickKakaoLogin}>카카오 로그인</button>
+      <button onClick={handleClickSocialLogin(SocialPlatform.Kakao)}>카카오 로그인</button>
+      <button onClick={handleClickSocialLogin(SocialPlatform.Naver)}>네이버 로그인</button>
+      <button onClick={handleClickSocialLogin(SocialPlatform.Google)}>구글 로그인</button>
     </div>
   );
 }

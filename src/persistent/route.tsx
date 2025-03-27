@@ -4,25 +4,24 @@ import MainPage from '../pages/Main';
 import NotFoundPage from '../pages/NotFound';
 import LoginPage from '../pages/Login';
 import SignPage from '../pages/Sign/Sign';
-import SignWithKakaoPage from '../pages/Sign/SignWithKakao';
+import { Layout } from '../common/Layout';
 
 export const ROUTER = createBrowserRouter(
   [
     {
-      path: '',
-      element: <MainPage />,
-    },
-    {
-      path: 'login',
-      element: <LoginPage />,
-    },
-    {
-      path: 'sign',
-      element: <SignPage />,
+      element: <Layout />,
       children: [
         {
-          path: 'kakao',
-          element: <SignWithKakaoPage />,
+          path: '',
+          element: <MainPage />,
+        },
+        {
+          path: 'login',
+          element: <LoginPage />,
+        },
+        {
+          path: 'sign',
+          element: <SignPage />,
         },
       ],
     },
