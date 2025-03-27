@@ -1,0 +1,19 @@
+name: link-force
+
+services:
+  web:
+    container_name: link-force-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - link-force
+
+networks:
+  link-force:
+    driver: bridge
