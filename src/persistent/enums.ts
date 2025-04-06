@@ -1,6 +1,6 @@
 export enum CookieKey {
-  AccessToken = 'link-force-access-token',
-  RefreshToken = 'link-force-refresh-token',
+  AccessToken = 'snipfy-access-token',
+  RefreshToken = 'snipfy-refresh-token',
 }
 
 export enum SocialPlatform {

@@ -1,8 +1,9 @@
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { SignApi } from '../../api/SignApi';
 import { setCookie } from '../../persistent/cookie';
 import { CookieKey } from '../../persistent/enums';
-import { useEffect } from 'react';
 
 export default function SignPage() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function SignPage() {
   const searchParams = new URLSearchParams(window.location.search);
   const authKey = searchParams.get('authKey');
 
-  const sign = async () => {
+  const sign = useCallback(async () => {
     if (!authKey) {
       return navigate('/login', { replace: true });
     }
@@ -24,7 +25,7 @@ export default function SignPage() {
 
       navigate('/', { replace: true });
     });
-  };
+  }, [navigate, authKey]);
 
   useEffect(() => {
     sign();

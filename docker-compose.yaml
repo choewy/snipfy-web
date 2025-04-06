@@ -1,19 +1,19 @@
-name: link-force
+name: snipfy
 
 services:
   web:
-    container_name: link-force-web
+    container_name: snipfy-web
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - 3000:3000
     networks:
-      - link-force
+      - snipfy
 
 networks:
-  link-force:
+  snipfy:
     driver: bridge

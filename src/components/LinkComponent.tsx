@@ -3,15 +3,17 @@ import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react'
 import { LinkApi } from '../api/LinkApi';
 import { QrCode } from '../persistent/qrcode';
 import { LINK_FORCE_LINK_URL } from '../persistent/config';
+import { CreateLinkResponse } from '../api/types';
 
 export default function LinkComponent() {
   const [url, setUrl] = useState<string>('');
 
-  const [result, setResult] = useState<{ id: string; type: string; url: string; expiredAt: string }>({
+  const [result, setResult] = useState<CreateLinkResponse>({
     id: '',
-    type: '',
+    type: 'free',
     url: '',
     expiredAt: '',
+    hitCount: 0,
   });
 
   const [dataURL, setDataURL] = useState<string>('');
@@ -24,11 +26,7 @@ export default function LinkComponent() {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      try {
-        const { data } = await LinkApi.createLink(url);
-
-        setResult(data);
-      } catch (e) {}
+      await LinkApi.createLink(url).then((response) => setResult(response.data.data));
     },
     [url],
   );
