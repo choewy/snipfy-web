@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react'
 
 import { LinkApi } from '../api/LinkApi';
 import { QrCode } from '../persistent/qrcode';
-import { LINK_FORCE_LINK_URL } from '../persistent/config';
+import { SNIPFY_GATEWAY_URL } from '../persistent/config';
 import { CreateLinkResponse } from '../api/types';
 
 export default function LinkComponent() {
@@ -37,7 +37,7 @@ export default function LinkComponent() {
     }
 
     try {
-      setDataURL(await QrCode.toDataURL(`${LINK_FORCE_LINK_URL}/${result.id}`));
+      setDataURL(await QrCode.toDataURL(`${SNIPFY_GATEWAY_URL}/${result.id}`));
     } catch (e) {}
   }, [result]);
 
@@ -70,7 +70,7 @@ export default function LinkComponent() {
           }}
         >
           <img alt="qrcode" src={dataURL} />
-          <input readOnly value={`${LINK_FORCE_LINK_URL}/${result.id}`} />
+          <input readOnly value={`${SNIPFY_GATEWAY_URL}/${result.id}`} />
         </div>
       )}
     </>

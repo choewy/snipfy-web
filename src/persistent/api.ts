@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-import { LINK_FORCE_API_URL } from './config';
+import { SNIPFY_API_URL } from './config';
 import { getCookie, setCookie } from './cookie';
 import { CookieKey } from './enums';
 
-const api = axios.create({ baseURL: LINK_FORCE_API_URL });
+const api = axios.create({ baseURL: SNIPFY_API_URL });
 
 api.interceptors.request.use((config) => {
   const accessToken = getCookie(CookieKey.AccessToken);
