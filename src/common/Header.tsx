@@ -1,9 +1,9 @@
-import './Navbar.css';
+import './Header.css';
 
 import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const Navbar = () => {
+export const Header = () => {
   const navigate = useNavigate();
 
   const handleGoTo = (to: string, replace?: boolean) => {
@@ -18,7 +18,7 @@ export const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-logo">
         <span className="navbar-link" onClick={handleGoTo('/')}>
-          LinkForce
+          Snipfy
         </span>
       </div>
       <ul className="navbar-links">
