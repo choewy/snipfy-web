@@ -1,9 +1,61 @@
-import { SnipfyApiInstance } from '../../core/api/snipfy-api.instance';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+
+import { configService } from '../../core/config/config.service';
 
 import { SignPlatform } from './persistents/enums';
 import { SnipfyCreateLinkResult, SnipfyGetLoginPageUrlResult, SnipfyGetSignTokenResult } from './persistents/types';
+import { SnipfyApiResponse } from './persistents/classes';
 
-export class SnipfyApiService extends SnipfyApiInstance {
+import { snipfyCookieService } from './snipfy-cookie.service';
+
+const AXIOS_INSTANCE = axios.create({ baseURL: configService.getSnipfyApiUrl() });
+
+AXIOS_INSTANCE.interceptors.request.use((config) => {
+  const accessToken = snipfyCookieService.getAccessToken();
+
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+
+  const refreshToken = snipfyCookieService.getRefreshToken();
+
+  if (refreshToken) {
+    config.headers['x-refresh-token'] = refreshToken;
+  }
+
+  return config;
+});
+
+AXIOS_INSTANCE.interceptors.response.use(
+  (response) => {
+    const accessToken = response.headers['x-access-token'];
+    const refreshToken = response.headers['x-refresh-token'];
+
+    if (accessToken && refreshToken) {
+      snipfyCookieService.setTokens(accessToken, refreshToken);
+    }
+
+    return response;
+  },
+  (error) => {
+    if (error?.response?.status === 401) {
+      snipfyCookieService.removeTokens();
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export class SnipfyApiService {
+  constructor(protected readonly api: AxiosInstance) {}
+
+  protected async request<T>(config: AxiosRequestConfig): Promise<SnipfyApiResponse<T>> {
+    return await this.api
+      .request<T>(config)
+      .then((response) => new SnipfyApiResponse(true, response))
+      .catch((error) => new SnipfyApiResponse(false, error.response));
+  }
+
   async getLoginPageUrl(platform: SignPlatform) {
     const href = window.location.href;
     const [protocol, url] = href.split('://');
@@ -33,4 +85,4 @@ export class SnipfyApiService extends SnipfyApiInstance {
   }
 }
 
-export const snipfySignApiService = new SnipfyApiService();
+export const snipfySignApiService = new SnipfyApiService(AXIOS_INSTANCE);
