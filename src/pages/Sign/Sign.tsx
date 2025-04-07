@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { SignApi } from '../../api/SignApi';
-import { setCookie } from '../../persistent/cookie';
-import { CookieKey } from '../../persistent/enums';
+import { snipfyCookie } from '../../core/cookie/snipfy-cookie';
+import { snipfySignApiService } from '../../api/snipfy/snipfy-api.service';
 
 export default function SignPage() {
   const navigate = useNavigate();
@@ -16,15 +15,16 @@ export default function SignPage() {
       return navigate('/login', { replace: true });
     }
 
-    await SignApi.getToken(authKey).then((response) => {
-      const accessToken = response.data?.data?.accessToken;
-      const refreshToken = response.data?.data?.accessToken;
+    const getSignTokenResult = await snipfySignApiService.getSignToken(authKey);
 
-      setCookie(CookieKey.AccessToken, accessToken);
-      setCookie(CookieKey.RefreshToken, refreshToken);
+    if (!getSignTokenResult.ok) {
+      // TODO
+      throw new Error('인증 토큰 요청 실패');
+    }
 
-      navigate('/', { replace: true });
-    });
+    snipfyCookie.setTokens(getSignTokenResult.data.accessToken, getSignTokenResult.data.refreshToken);
+
+    navigate('/', { replace: true });
   }, [navigate, authKey]);
 
   useEffect(() => {

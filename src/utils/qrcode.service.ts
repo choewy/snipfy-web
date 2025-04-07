@@ -1,13 +1,13 @@
 import * as qrcode from 'qrcode';
 
-export class QrCode {
-  public static toCanvas(element: HTMLElement, value: string) {
+export class QrCodeService {
+  public toCanvas(element: HTMLElement, value: string) {
     qrcode.toCanvas(element, value);
   }
 
-  public static async toDataURL(value: string) {
+  async toDataURL(linkUrl: string) {
     return new Promise<string>((resolve, reject) => {
-      qrcode.toDataURL(value, (error, url) => {
+      qrcode.toDataURL(linkUrl, (error, url) => {
         if (error) {
           reject(error);
         } else {
@@ -17,3 +17,5 @@ export class QrCode {
     });
   }
 }
+
+export const qrCodeService = new QrCodeService();

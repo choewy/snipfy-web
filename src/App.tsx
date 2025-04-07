@@ -1,7 +1,7 @@
 import { RecoilRoot } from 'recoil';
 import { RouterProvider } from 'react-router';
 
-import { ROUTER } from './persistent/route';
+import { ROUTER } from './router';
 
 function App() {
   return (

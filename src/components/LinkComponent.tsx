@@ -1,22 +1,20 @@
-import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 
-import { LinkApi } from '../api/LinkApi';
-import { QrCode } from '../persistent/qrcode';
-import { SNIPFY_GATEWAY_URL } from '../persistent/config';
-import { CreateLinkResponse } from '../api/types';
+import { qrCodeService } from '../utils/qrcode.service';
+import { configService } from '../core/config/config.service';
+import { snipfySignApiService } from '../api/snipfy/snipfy-api.service';
+
+import { LinkComponentCreateLinkResultStateType } from './types';
+import { LinkComponentCreateLinkStatus } from './enums';
 
 export default function LinkComponent() {
   const [url, setUrl] = useState<string>('');
-
-  const [result, setResult] = useState<CreateLinkResponse>({
-    id: '',
-    type: 'free',
-    url: '',
+  const [result, setResult] = useState<LinkComponentCreateLinkResultStateType>({
+    status: LinkComponentCreateLinkStatus.Pending,
+    linkUrl: '',
+    qrCodeUrl: '',
     expiredAt: '',
-    hitCount: 0,
   });
-
-  const [dataURL, setDataURL] = useState<string>('');
 
   const handleChangeUrlInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setUrl(e.currentTarget.value);
@@ -26,24 +24,27 @@ export default function LinkComponent() {
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      await LinkApi.createLink(url).then((response) => setResult(response.data.data));
+      const createLinkResult = await snipfySignApiService.createLink(url);
+
+      console.log({ createLinkResult });
+
+      if (!createLinkResult.ok) {
+        // TODO
+        throw new Error('링크 생성 실패');
+      }
+
+      const linkUrl = `${configService.getSnipfyGatewayUrl()}/${createLinkResult.data.id}`;
+      const qrCodeUrl = await qrCodeService.toDataURL(linkUrl);
+
+      setResult({
+        status: LinkComponentCreateLinkStatus.Success,
+        linkUrl,
+        qrCodeUrl,
+        expiredAt: createLinkResult.data.expiredAt,
+      });
     },
     [url],
   );
-
-  const onChangeResult = useCallback(async () => {
-    if (!result.id) {
-      return;
-    }
-
-    try {
-      setDataURL(await QrCode.toDataURL(`${SNIPFY_GATEWAY_URL}/${result.id}`));
-    } catch (e) {}
-  }, [result]);
-
-  useEffect(() => {
-    onChangeResult();
-  }, [onChangeResult]);
 
   return (
     <>
@@ -60,7 +61,7 @@ export default function LinkComponent() {
         <button type="submit">링크생성</button>
       </form>
 
-      {result.id && (
+      {result.status === LinkComponentCreateLinkStatus.Success && (
         <div
           style={{
             display: 'flex',
@@ -69,8 +70,8 @@ export default function LinkComponent() {
             justifyContent: 'center',
           }}
         >
-          <img alt="qrcode" src={dataURL} />
-          <input readOnly value={`${SNIPFY_GATEWAY_URL}/${result.id}`} />
+          <img alt="qrcode" src={result.qrCodeUrl} />
+          <input readOnly value={result.linkUrl} />
         </div>
       )}
     </>

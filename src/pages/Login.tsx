@@ -1,26 +1,25 @@
-import { SignApi } from '../api/SignApi';
-import { SocialPlatform } from '../persistent/enums';
+import { SignPlatform } from '../api/snipfy/persistents/enums';
+import { snipfySignApiService } from '../api/snipfy/snipfy-api.service';
 
 export default function LoginPage() {
-  const handleClickSocialLogin = (platform: SocialPlatform) => {
+  const handleClickSocialLogin = (platform: SignPlatform) => {
     return async () => {
-      await SignApi.getSocialLoginPageUrl(platform).then((response) => {
-        const url = response.data?.data?.url;
+      const getLoginPageUrlResult = await snipfySignApiService.getLoginPageUrl(platform);
 
-        if (!url) {
-          throw new Error();
-        }
+      if (!getLoginPageUrlResult.ok) {
+        // TODO
+        throw new Error('로그인 페이지 요청 실패');
+      }
 
-        window.location.href = url;
-      });
+      window.location.href = getLoginPageUrlResult.data.url;
     };
   };
 
   return (
     <div>
-      <button onClick={handleClickSocialLogin(SocialPlatform.Kakao)}>카카오 로그인</button>
-      <button onClick={handleClickSocialLogin(SocialPlatform.Naver)}>네이버 로그인</button>
-      <button onClick={handleClickSocialLogin(SocialPlatform.Google)}>구글 로그인</button>
+      <button onClick={handleClickSocialLogin(SignPlatform.Kakao)}>카카오 로그인</button>
+      <button onClick={handleClickSocialLogin(SignPlatform.Naver)}>네이버 로그인</button>
+      <button onClick={handleClickSocialLogin(SignPlatform.Google)}>구글 로그인</button>
     </div>
   );
 }
