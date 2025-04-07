@@ -1,13 +1,9 @@
-import { RecoilRoot } from 'recoil';
-import { RouterProvider } from 'react-router';
+import Layout from './common/Layout';
 
-import { ROUTER } from './router';
 
 function App() {
   return (
-    <RecoilRoot>
-      <RouterProvider router={ROUTER} />
-    </RecoilRoot>
+    <Layout />
   );
 }
 
