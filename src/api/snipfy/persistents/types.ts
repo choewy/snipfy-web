@@ -8,6 +8,6 @@ export type SnipfyGetSignTokenResult = {
 };
 
 export type SnipfyCreateLinkResult = {
-  id: string;
+  linkId: string;
   expiredAt: string | null;
 };

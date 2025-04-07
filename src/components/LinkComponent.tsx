@@ -26,14 +26,12 @@ export default function LinkComponent() {
 
       const createLinkResult = await snipfySignApiService.createLink(url);
 
-      console.log({ createLinkResult });
-
       if (!createLinkResult.ok) {
         // TODO
         throw new Error('링크 생성 실패');
       }
 
-      const linkUrl = `${configService.getSnipfyGatewayUrl()}/${createLinkResult.data.id}`;
+      const linkUrl = `${configService.getSnipfyGatewayUrl()}/${createLinkResult.data.linkId}`;
       const qrCodeUrl = await qrCodeService.toDataURL(linkUrl);
 
       setResult({
