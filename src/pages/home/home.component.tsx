@@ -15,7 +15,7 @@ export class HomeComponent {
     };
 
     return (
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -82,19 +82,23 @@ export class HomeComponent {
               Snipfy
             </Typography>
             <Box sx={{ flexGrow: 1, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button variant="text" onClick={handleCloseNavMenu}>
                 공지사항
               </Button>
-              <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button variant="text" onClick={handleCloseNavMenu}>
                 이용안내
               </Button>
-              <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+              <Button variant="text" onClick={handleCloseNavMenu}>
                 문의
               </Button>
             </Box>
             <Box sx={{ flexGrow: 0, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="outlined">로그인</Button>
-              <Button variant="contained">회원가입</Button>
+              <Button variant="text" sx={{ fontWeight: 600, width: 100 }}>
+                로그인
+              </Button>
+              <Button variant="contained" sx={{ fontWeight: 600, width: 150 }}>
+                회원가입
+              </Button>
             </Box>
           </Toolbar>
         </Container>
@@ -102,11 +106,15 @@ export class HomeComponent {
     );
   }
 
-  public static Title() {
+  public static Summary() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h1>TITLE</h1>
-      </div>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 1000 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 200 }}>
+          <Typography variant="h1" sx={{ fontSize: 42, fontWeight: 700 }}>
+            Build Stronger digital connections
+          </Typography>
+        </Box>
+      </Box>
     );
   }
 

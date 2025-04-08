@@ -17,11 +17,13 @@ const DEFAULT_THEME_OPTIONS: ThemeOptions = {
       main: '#ff5252',
       light: '#ff5252',
       dark: '#c62828',
+      contrastText: '#ffffff',
     },
     secondary: {
       main: '#ff5252',
       light: '#ff5252',
       dark: '#c62828',
+      contrastText: '#ffffff',
     },
     background: {
       default: '#f5f5f5',
@@ -33,6 +35,26 @@ const DEFAULT_THEME_OPTIONS: ThemeOptions = {
       disabled: '#000000',
     },
     divider: '#000000',
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+        },
+        contained: {
+          color: '#ff5252',
+          backgroundColor: '#ffffff',
+        },
+        outlined: {
+          color: '#ffffff',
+          borderColor: '#ffffff',
+        },
+        text: {
+          color: '#ffffff',
+        },
+      },
+    },
   },
 };
 

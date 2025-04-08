@@ -4,7 +4,7 @@ export default function HomePage() {
   return (
     <>
       <HomeComponent.Header />
-      <HomeComponent.Title />
+      <HomeComponent.Summary />
       <HomeComponent.CreateLinkContent />
       <HomeComponent.InformationContent />
       <HomeComponent.Footer />
