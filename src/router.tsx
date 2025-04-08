@@ -1,24 +1,27 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 
-import App from './App';
-import MainPage from './pages/Main';
-import NotFoundPage from './pages/NotFound';
+import App from './app';
 import LoginPage from './pages/Login';
 import SignPage from './pages/Sign/Sign';
+import HomePage from './pages/home/home.page';
+import NotFoundPage from './pages/not-found/not-found.page';
 
 export const ROUTER = createBrowserRouter(
   [
     {
-      element: <div>Landing Page</div>,
-      path: '/landing',
+      path: '',
+      element: <HomePage />,
     },
     {
-      element: <App />,
+      element: (
+        <div>
+          <div>LAYOUT</div>
+          <div>
+            <Outlet />
+          </div>
+        </div>
+      ),
       children: [
-        {
-          path: '',
-          element: <MainPage />,
-        },
         {
           path: 'login',
           element: <LoginPage />,
