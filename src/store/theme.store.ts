@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { createTheme, ThemeOptions, Theme } from '@mui/material';
 
+export const MAIN_COLOR = '#1F3731';
+export const REVERSE_COLOR = '#f5f5f5';
+
 const DEFAULT_THEME_OPTIONS: ThemeOptions = {
   breakpoints: {
     values: {
@@ -14,20 +17,16 @@ const DEFAULT_THEME_OPTIONS: ThemeOptions = {
   palette: {
     mode: 'light',
     primary: {
-      main: '#ff5252',
-      light: '#ff5252',
-      dark: '#c62828',
-      contrastText: '#ffffff',
+      main: MAIN_COLOR,
+      contrastText: REVERSE_COLOR,
     },
     secondary: {
-      main: '#ff5252',
-      light: '#ff5252',
-      dark: '#c62828',
-      contrastText: '#ffffff',
+      main: MAIN_COLOR,
+      contrastText: REVERSE_COLOR,
     },
     background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
+      default: REVERSE_COLOR,
+      paper: REVERSE_COLOR,
     },
     text: {
       primary: '#000000',
@@ -40,18 +39,18 @@ const DEFAULT_THEME_OPTIONS: ThemeOptions = {
     MuiButton: {
       styleOverrides: {
         root: {
-          color: '#ffffff',
+          color: REVERSE_COLOR,
         },
         contained: {
-          color: '#ff5252',
-          backgroundColor: '#ffffff',
+          color: MAIN_COLOR,
+          backgroundColor: REVERSE_COLOR,
         },
         outlined: {
-          color: '#ffffff',
-          borderColor: '#ffffff',
+          color: REVERSE_COLOR,
+          borderColor: REVERSE_COLOR,
         },
         text: {
-          color: '#ffffff',
+          color: REVERSE_COLOR,
         },
       },
     },

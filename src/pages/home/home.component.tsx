@@ -1,9 +1,12 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { Adb as AdbIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { DARK_GREEN, useColorStore, WHITE } from '../../store/color.store';
 
 export class HomeComponent {
   public static Header() {
+    const { mainColor, reverseColor, changeColorsOnScrollY } = useColorStore();
+
     const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
 
     const handleOpenNavMenu = (e: MouseEvent<HTMLElement>) => {
@@ -14,11 +17,19 @@ export class HomeComponent {
       setAnchorElement(null);
     };
 
+    useEffect(() => {
+      window.addEventListener('scroll', changeColorsOnScrollY);
+
+      return () => {
+        window.removeEventListener('scroll', changeColorsOnScrollY);
+      };
+    }, []);
+
     return (
-      <AppBar position="sticky">
+      <AppBar position="sticky" sx={{ backgroundColor: mainColor }} elevation={0}>
         <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Toolbar sx={{ height: 90 }}>
+            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: reverseColor }} />
             <Typography
               variant="h6"
               noWrap
@@ -30,7 +41,7 @@ export class HomeComponent {
                 fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.3rem',
-                color: 'inherit',
+                color: reverseColor,
                 textDecoration: 'none',
               }}
             >
@@ -82,21 +93,21 @@ export class HomeComponent {
               Snipfy
             </Typography>
             <Box sx={{ flexGrow: 1, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" onClick={handleCloseNavMenu}>
+              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
                 공지사항
               </Button>
-              <Button variant="text" onClick={handleCloseNavMenu}>
+              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
                 이용안내
               </Button>
-              <Button variant="text" onClick={handleCloseNavMenu}>
+              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
                 문의
               </Button>
             </Box>
             <Box sx={{ flexGrow: 0, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" sx={{ fontWeight: 600, width: 100 }}>
+              <Button variant="text" sx={{ fontWeight: 600, width: 100, color: reverseColor }}>
                 로그인
               </Button>
-              <Button variant="contained" sx={{ fontWeight: 600, width: 150 }}>
+              <Button variant="contained" sx={{ fontWeight: 600, width: 150, color: mainColor, backgroundColor: reverseColor }}>
                 회원가입
               </Button>
             </Box>
@@ -108,9 +119,9 @@ export class HomeComponent {
 
   public static Summary() {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 1000 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 1000, backgroundColor: DARK_GREEN }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 200 }}>
-          <Typography variant="h1" sx={{ fontSize: 42, fontWeight: 700 }}>
+          <Typography variant="h1" sx={{ fontSize: 42, fontWeight: 700, color: WHITE }}>
             Build Stronger digital connections
           </Typography>
         </Box>
