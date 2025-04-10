@@ -1,22 +1,40 @@
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, Paper, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  InputAdornment,
+  Paper,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { CopyAll as CopyAllIcon } from '@mui/icons-material';
 
-import { useLinkFormStore } from '../../store/link-form.store';
+import { useCreateLinkResultStore } from '../../store/create-link-result.store';
 
 export class HomeComponent {
   public static LinkModal() {
-    const { modalOpen, status, linkUrl, qrCodeUrl, expiredAt, errorMessage, closeModal } = useLinkFormStore();
+    const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkResultStore();
 
-    // TODO: 오류 메시지 표시
-    console.log(errorMessage);
+    if (status === 'error') {
+      return <></>;
+    }
 
     return (
-      <Dialog open={modalOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">단축 링크 생성</DialogTitle>
         {status === 'pending' ? (
-          <div>생성중</div>
+          <Backdrop open={true}>
+            <CircularProgress sx={{ color: '#1e293b' }} />
+          </Backdrop>
         ) : (
           <DialogContent>
             <DialogContentText>링크 생성이 완료되었습니다.</DialogContentText>
@@ -51,9 +69,24 @@ export class HomeComponent {
   }
 
   public static LinkForm() {
-    const { create } = useLinkFormStore();
+    const { create } = useCreateLinkResultStore();
 
     const [url, setUrl] = useState<string>('');
+
+    const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
+      const url = e.target.value;
+
+      if (
+        ['', 'h', 'ht', 'htt', 'http', 'https', 'http:', 'https:', 'http:/', 'https:/', 'http://', 'https://'].includes(url) ||
+        url.length === 0 ||
+        url.startsWith('http://') ||
+        url.startsWith('https://')
+      ) {
+        return setUrl(url);
+      }
+
+      setUrl(`https://${url}`);
+    };
 
     return (
       <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400 }}>
@@ -73,12 +106,10 @@ export class HomeComponent {
             autoComplete="off"
             placeholder="https://example.com/bla-bla-bla"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={handleChangeUrl}
             slotProps={{
               input: {
-                style: {
-                  backgroundColor: '#ffffff',
-                },
+                style: { backgroundColor: '#ffffff' },
                 startAdornment: <InputAdornment position="start">URL</InputAdornment>,
               },
             }}
