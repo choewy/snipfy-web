@@ -20,15 +20,22 @@ import { CopyAll as CopyAllIcon } from '@mui/icons-material';
 
 import { useCreateLinkResultStore } from '../../store/create-link-result.store';
 import { NotiStackEvent } from '../../persistents/events/noti-stack.event';
+import { clipboardService } from '../../core/clipboard/clipboard.service';
 
 export class HomeComponent {
   public static LinkModal() {
     const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkResultStore();
 
-    const handleCopyLink = () => {
-      navigator.clipboard.writeText(linkUrl);
+    const handleCopyLink = async () => {
+      await clipboardService.copyText(linkUrl);
 
       NotiStackEvent.success('링크가 복사되었습니다.');
+    };
+
+    const handleCopyQrCode = async () => {
+      await clipboardService.copyImage(qrCodeUrl);
+
+      NotiStackEvent.success('QR 코드가 복사되었습니다.');
     };
 
     if (status === 'error') {
@@ -63,7 +70,10 @@ export class HomeComponent {
               }}
               helperText={expiredAt ? `생성된 링크는 ${expiredAt}에 삭제됩니다.` : undefined}
             />
-            <img alt="qrcode" src={qrCodeUrl} />
+            <img alt="qrcode" src={qrCodeUrl} width={250} height={250} />
+            <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
+              <CopyAllIcon />
+            </Button>
           </DialogContent>
         )}
         <DialogActions>
