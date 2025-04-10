@@ -75,7 +75,12 @@ export class HomeComponent {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             slotProps={{
-              input: { startAdornment: <InputAdornment position="start">URL</InputAdornment> },
+              input: {
+                style: {
+                  backgroundColor: '#ffffff',
+                },
+                startAdornment: <InputAdornment position="start">URL</InputAdornment>,
+              },
             }}
           />
           <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: 600 }}>
