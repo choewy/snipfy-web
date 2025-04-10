@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
 import { Adb as AdbIcon, Close as CloseIcon, GitHub as GitHubIcon, LightMode as LightModeIcon, Search as SearchIcon } from '@mui/icons-material';
 
-import { useNewsConfigStore } from '../../store/new-config.store';
+import { useNewsConfigStore } from '../../store/news-config.store';
 import { useScrollStore } from '../../store/scoll.store';
 
 export class LayoutComponent {

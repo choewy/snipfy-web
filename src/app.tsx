@@ -1,22 +1,23 @@
 import { RouterProvider } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 import { ThemeProvider, CssBaseline } from '@mui/material';
 
 import { ROUTER } from './router';
-import { useThemeStore } from './store/theme.store';
+import { DEFAULT_THEME } from './persistents/theme';
 
 import Modal from './common/modal/modal';
-import NotistackProvider from './common/notistack/notistack-provider';
+import NotiStack from './common/notistack/notistack';
 
 function App() {
-  const theme = useThemeStore((state) => state.theme);
-
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={DEFAULT_THEME}>
       <CssBaseline />
-      <RouterProvider router={ROUTER} />
-      <Modal />
-      <NotistackProvider />
+      <SnackbarProvider maxSnack={5} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <NotiStack />
+        <Modal />
+        <RouterProvider router={ROUTER} />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }
