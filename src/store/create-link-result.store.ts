@@ -6,6 +6,7 @@ import { AlertModalEvent } from '../persistents/events/alert-modal.event';
 import { configService } from '../core/config/config.service';
 import { snipfySignApiService } from '../api/snipfy/snipfy-api.service';
 import { qrCodeService } from '../utils/qrcode.service';
+import { NotiStackEvent } from '../persistents/events/noti-stack.event';
 
 export type CreateLinkResultStore = {
   open: boolean;
@@ -39,14 +40,18 @@ export const useCreateLinkResultStore = create<CreateLinkResultStore>((set) => (
       return AlertModalEvent.open('링크 생성 실패', 'URL 형식에 맞지 않습니다.');
     }
 
-    set({ status: 'pending' });
+    set({ open: true, status: 'pending' });
 
     const createLinkResult = await snipfySignApiService.createLink(url);
 
     if (!createLinkResult.ok) {
-      set({ open: false, status: 'error' });
+      if (typeof createLinkResult.error?.statusCode === 'number') {
+        AlertModalEvent.open('링크 생성 실패', '단축 링크 생성을 실패하였습니다.');
+      } else {
+        NotiStackEvent.error(createLinkResult.error?.message ?? '');
+      }
 
-      return AlertModalEvent.open('링크 생성 실패', '단축 링크 생성을 실패하였습니다.');
+      return set({ open: false, status: 'error' });
     }
 
     const linkUrl = `${configService.getSnipfyGatewayUrl()}/${createLinkResult.data.linkId}`;

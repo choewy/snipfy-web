@@ -53,7 +53,7 @@ export class SnipfyApiService {
     return await this.api
       .request<T>(config)
       .then((response) => new SnipfyApiResponse(true, response))
-      .catch((error) => new SnipfyApiResponse(false, error.response));
+      .catch((error) => new SnipfyApiResponse(false, error.response, error));
   }
 
   async getLoginPageUrl(platform: SignPlatform) {

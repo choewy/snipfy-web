@@ -42,40 +42,42 @@ export class HomeComponent {
       return <></>;
     }
 
+    if (status === 'pending' && open === true) {
+      return (
+        <Backdrop open={true} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <CircularProgress sx={{ color: '#1e293b' }} />
+        </Backdrop>
+      );
+    }
+
     return (
       <Dialog open={open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">단축 링크 생성</DialogTitle>
-        {status === 'pending' ? (
-          <Backdrop open={true}>
-            <CircularProgress sx={{ color: '#1e293b' }} />
-          </Backdrop>
-        ) : (
-          <DialogContent>
-            <DialogContentText>링크 생성이 완료되었습니다.</DialogContentText>
-            <TextField
-              fullWidth
-              value={linkUrl}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  startAdornment: <InputAdornment position="start">URL</InputAdornment>,
-                  endAdornment: (
-                    <Tooltip title="링크 복사">
-                      <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
-                        <CopyAllIcon />
-                      </Button>
-                    </Tooltip>
-                  ),
-                },
-              }}
-              helperText={expiredAt ? `생성된 링크는 ${expiredAt}에 삭제됩니다.` : undefined}
-            />
-            <img alt="qrcode" src={qrCodeUrl} width={250} height={250} />
-            <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
-              <CopyAllIcon />
-            </Button>
-          </DialogContent>
-        )}
+        <DialogContent>
+          <DialogContentText>링크 생성이 완료되었습니다.</DialogContentText>
+          <TextField
+            fullWidth
+            value={linkUrl}
+            slotProps={{
+              input: {
+                readOnly: true,
+                startAdornment: <InputAdornment position="start">URL</InputAdornment>,
+                endAdornment: (
+                  <Tooltip title="링크 복사">
+                    <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
+                      <CopyAllIcon />
+                    </Button>
+                  </Tooltip>
+                ),
+              },
+            }}
+            helperText={expiredAt ? `생성된 링크는 ${expiredAt}에 삭제됩니다.` : undefined}
+          />
+          <img alt="qrcode" src={qrCodeUrl} width={250} height={250} />
+          <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
+            <CopyAllIcon />
+          </Button>
+        </DialogContent>
         <DialogActions>
           <Button size="small" sx={{ color: '#1e293b' }} onClick={closeModal}>
             닫기
