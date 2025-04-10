@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { DateTime } from 'luxon';
 
 import { URL_REGEX } from '../persistents/regex';
-import { AlertModalOpenEvent } from '../persistents/events/alert-modal-open.event';
+import { AlertModalEvent } from '../persistents/events/alert-modal.event';
 import { configService } from '../core/config/config.service';
 import { snipfySignApiService } from '../api/snipfy/snipfy-api.service';
 import { qrCodeService } from '../utils/qrcode.service';
@@ -30,13 +30,13 @@ export const useCreateLinkResultStore = create<CreateLinkResultStore>((set) => (
     if (url.length === 0) {
       set({ open: false, status: 'error' });
 
-      return new AlertModalOpenEvent('링크 생성 실패', 'URL을 입력해주세요.').dispatch();
+      return AlertModalEvent.open('링크 생성 실패', 'URL을 입력해주세요.');
     }
 
     if (!URL_REGEX.test(url)) {
       set({ open: false, status: 'error' });
 
-      return new AlertModalOpenEvent('링크 생성 실패', 'URL 형식에 맞지 않습니다.').dispatch();
+      return AlertModalEvent.open('링크 생성 실패', 'URL 형식에 맞지 않습니다.');
     }
 
     set({ status: 'pending' });
@@ -46,7 +46,7 @@ export const useCreateLinkResultStore = create<CreateLinkResultStore>((set) => (
     if (!createLinkResult.ok) {
       set({ open: false, status: 'error' });
 
-      return new AlertModalOpenEvent('링크 생성 실패', createLinkResult.error?.message ?? '단축 링크 생성을 실패하였습니다.').dispatch();
+      return AlertModalEvent.open('링크 생성 실패', '단축 링크 생성을 실패하였습니다.');
     }
 
     const linkUrl = `${configService.getSnipfyGatewayUrl()}/${createLinkResult.data.linkId}`;

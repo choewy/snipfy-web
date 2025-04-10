@@ -1,22 +1,34 @@
 import { useEffect } from 'react';
 
-import { ModalComponent } from './modal.component';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-import { AlertModalOpenEvent } from '../../persistents/events/alert-modal-open.event';
+import { AlertModalEvent } from '../../persistents/events/alert-modal.event';
 import { useAlertModalStore } from '../../store/alert-modal.store';
 
 export default function Modal() {
-  const { onOpen } = useAlertModalStore();
+  const { open, title, message, onOpen, onClose } = useAlertModalStore();
+
+  const handleEvent = AlertModalEvent.handleEvent(onOpen);
 
   useEffect(() => {
-    const handleEvent = AlertModalOpenEvent.handleEvent(onOpen);
-
-    window.addEventListener(AlertModalOpenEvent.name, handleEvent);
+    window.addEventListener(AlertModalEvent.name, handleEvent);
 
     return () => {
-      window.removeEventListener(AlertModalOpenEvent.name, handleEvent);
+      window.removeEventListener(AlertModalEvent.name, handleEvent);
     };
   }, []);
 
-  return <ModalComponent.AlertModal />;
+  return (
+    <Dialog open={open} aria-labelledby="alert-modal-title" aria-describedby="alert-modal-description">
+      <DialogTitle id="alert-modal-title">{title}</DialogTitle>
+      <DialogContent id="alert-modal-content" sx={{ width: 600 }}>
+        <DialogContentText>{message}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button size="small" sx={{ color: '#1e293b' }} onClick={onClose}>
+          확인
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }

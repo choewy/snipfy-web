@@ -19,10 +19,17 @@ import {
 import { CopyAll as CopyAllIcon } from '@mui/icons-material';
 
 import { useCreateLinkResultStore } from '../../store/create-link-result.store';
+import { NotiStackEvent } from '../../persistents/events/noti-stack.event';
 
 export class HomeComponent {
   public static LinkModal() {
     const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkResultStore();
+
+    const handleCopyLink = () => {
+      navigator.clipboard.writeText(linkUrl);
+
+      NotiStackEvent.success('링크가 복사되었습니다.');
+    };
 
     if (status === 'error') {
       return <></>;
@@ -47,7 +54,7 @@ export class HomeComponent {
                   startAdornment: <InputAdornment position="start">URL</InputAdornment>,
                   endAdornment: (
                     <Tooltip title="링크 복사">
-                      <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={() => navigator.clipboard.writeText(linkUrl)}>
+                      <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
                         <CopyAllIcon />
                       </Button>
                     </Tooltip>
