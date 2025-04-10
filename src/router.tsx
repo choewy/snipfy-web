@@ -1,6 +1,6 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 
-import App from './app';
+import Layout from './common/layout/layout';
 import LoginPage from './pages/Login';
 import SignPage from './pages/Sign/Sign';
 import HomePage from './pages/home/home.page';
@@ -9,19 +9,12 @@ import NotFoundPage from './pages/not-found/not-found.page';
 export const ROUTER = createBrowserRouter(
   [
     {
-      path: '',
-      element: <HomePage />,
-    },
-    {
-      element: (
-        <div>
-          <div>LAYOUT</div>
-          <div>
-            <Outlet />
-          </div>
-        </div>
-      ),
+      element: <Layout />,
       children: [
+        {
+          path: '',
+          element: <HomePage />,
+        },
         {
           path: 'login',
           element: <LoginPage />,

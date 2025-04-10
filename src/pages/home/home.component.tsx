@@ -1,164 +1,120 @@
-import { MouseEvent, useEffect, useState } from 'react';
-import { AppBar, Box, Button, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
-import { Adb as AdbIcon, Menu as MenuIcon } from '@mui/icons-material';
-import { DARK_GREEN, useColorStore, WHITE } from '../../store/color.store';
+import { useState } from 'react';
+
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputAdornment, Paper, TextField, Toolbar, Tooltip, Typography } from '@mui/material';
+import { CopyAll as CopyAllIcon } from '@mui/icons-material';
+
+import { useLinkFormStore } from '../../store/link-form.store';
 
 export class HomeComponent {
-  public static Header() {
-    const { mainColor, reverseColor, changeColorsOnScrollY } = useColorStore();
+  public static LinkModal() {
+    const { modalOpen, status, linkUrl, qrCodeUrl, expiredAt, errorMessage, closeModal } = useLinkFormStore();
 
-    const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
-
-    const handleOpenNavMenu = (e: MouseEvent<HTMLElement>) => {
-      setAnchorElement(e.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-      setAnchorElement(null);
-    };
-
-    useEffect(() => {
-      window.addEventListener('scroll', changeColorsOnScrollY);
-
-      return () => {
-        window.removeEventListener('scroll', changeColorsOnScrollY);
-      };
-    }, []);
+    // TODO: 오류 메시지 표시
+    console.log(errorMessage);
 
     return (
-      <AppBar position="sticky" sx={{ backgroundColor: mainColor }} elevation={0}>
-        <Container maxWidth="xl">
-          <Toolbar sx={{ height: 90 }}>
-            <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: reverseColor }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: reverseColor,
-                textDecoration: 'none',
+      <Dialog open={modalOpen} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">단축 링크 생성</DialogTitle>
+        {status === 'pending' ? (
+          <div>생성중</div>
+        ) : (
+          <DialogContent>
+            <DialogContentText>링크 생성이 완료되었습니다.</DialogContentText>
+            <TextField
+              fullWidth
+              value={linkUrl}
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  startAdornment: <InputAdornment position="start">URL</InputAdornment>,
+                  endAdornment: (
+                    <Tooltip title="링크 복사">
+                      <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={() => navigator.clipboard.writeText(linkUrl)}>
+                        <CopyAllIcon />
+                      </Button>
+                    </Tooltip>
+                  ),
+                },
               }}
-            >
-              Snipfy
-            </Typography>
-
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElement}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={!!anchorElement}
-                onClose={handleCloseNavMenu}
-                sx={{ display: { xs: 'block', md: 'none' } }}
-              >
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>PAGE</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              Snipfy
-            </Typography>
-            <Box sx={{ flexGrow: 1, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
-                공지사항
-              </Button>
-              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
-                이용안내
-              </Button>
-              <Button variant="text" onClick={handleCloseNavMenu} sx={{ color: reverseColor }}>
-                문의
-              </Button>
-            </Box>
-            <Box sx={{ flexGrow: 0, gap: 1, display: { xs: 'none', md: 'flex' } }}>
-              <Button variant="text" sx={{ fontWeight: 600, width: 100, color: reverseColor }}>
-                로그인
-              </Button>
-              <Button variant="contained" sx={{ fontWeight: 600, width: 150, color: mainColor, backgroundColor: reverseColor }}>
-                회원가입
-              </Button>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
+              helperText={expiredAt ? `생성된 링크는 ${expiredAt}에 삭제됩니다.` : undefined}
+            />
+            <img alt="qrcode" src={qrCodeUrl} />
+          </DialogContent>
+        )}
+        <DialogActions>
+          <Button size="small" sx={{ color: '#1e293b' }} onClick={closeModal}>
+            닫기
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 
-  public static Summary() {
+  public static LinkForm() {
+    const { create } = useLinkFormStore();
+
+    const [url, setUrl] = useState<string>('');
+
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: 1000, backgroundColor: DARK_GREEN }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 200 }}>
-          <Typography variant="h1" sx={{ fontSize: 42, fontWeight: 700, color: WHITE }}>
-            Build Stronger digital connections
+      <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 400 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: 600 }}>
+          <Typography variant="h3" sx={{ fontSize: 36, fontWeight: 700, textAlign: 'center', color: '#1e293b' }}>
+            무료로 나만의 단축 링크를 생성하세요.
           </Typography>
+          <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 400, textAlign: 'center', color: '#64748b' }}>
+            로그인 없이 쉽고 빠르게 단축 링크를 생성하고 공유하세요.
+            <br />
+            로그인 없이 생성한 단축 링크는 1개월 뒤에 삭제되지만, 로그인 후 생성한 단축 링크는 영구 보존됩니다.
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: 600 }}>
+          <TextField
+            fullWidth
+            autoComplete="off"
+            placeholder="https://example.com/bla-bla-bla"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            slotProps={{
+              input: { startAdornment: <InputAdornment position="start">URL</InputAdornment> },
+            }}
+          />
+          <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: 600 }}>
+            <Button variant="contained" color="primary" sx={{ width: 100 }} onClick={() => create(url)}>
+              링크생성
+            </Button>
+            <Button variant="outlined" color="primary" sx={{ width: 100 }}>
+              로그인
+            </Button>
+          </Box>
         </Box>
       </Box>
     );
   }
 
-  public static Description() {
+  public static Dashboard() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h3>DESCRIPTION</h3>
-      </div>
-    );
-  }
-
-  public static CreateLinkContent() {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h3>CREATE LINK</h3>
-        <span>CREATE LINK DESCRIPTION</span>
-        <label>CREATE LINK COMMENT</label>
-        <input type="text" placeholder="https://example.com/bla-bla-bla" />
-        <button>CREATE LINK</button>
-      </div>
-    );
-  }
-
-  public static InformationContent() {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h3>INFORMATION</h3>
-        <span>INFORMATION DESCRIPTION</span>
-      </div>
+      <Paper
+        elevation={0}
+        sx={{
+          backgroundColor: '#ffffff',
+          borderWidth: 1,
+          borderStyle: 'solid',
+          borderColor: '#e2e8f0',
+          borderRadius: 5,
+          width: '100%',
+          height: '760px',
+        }}
+      >
+        <Box></Box>
+      </Paper>
     );
   }
 
   public static Footer() {
-    return <footer>FOOTER</footer>;
+    return (
+      <footer>
+        <Box sx={{ backgroundColor: '#f8fafc', height: '100px', width: '100%' }}></Box>
+      </footer>
+    );
   }
 }

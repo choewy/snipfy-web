@@ -3,10 +3,9 @@ import { HomeComponent } from './home.component';
 export default function HomePage() {
   return (
     <>
-      <HomeComponent.Header />
-      <HomeComponent.Summary />
-      <HomeComponent.CreateLinkContent />
-      <HomeComponent.InformationContent />
+      <HomeComponent.LinkModal />
+      <HomeComponent.LinkForm />
+      <HomeComponent.Dashboard />
       <HomeComponent.Footer />
     </>
   );

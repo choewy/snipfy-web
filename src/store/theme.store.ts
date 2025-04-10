@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 import { createTheme, ThemeOptions, Theme } from '@mui/material';
 
-export const MAIN_COLOR = '#1F3731';
-export const REVERSE_COLOR = '#f5f5f5';
-
 const DEFAULT_THEME_OPTIONS: ThemeOptions = {
   breakpoints: {
     values: {
@@ -14,43 +11,18 @@ const DEFAULT_THEME_OPTIONS: ThemeOptions = {
       xl: 1536,
     },
   },
-  palette: {
-    mode: 'light',
-    primary: {
-      main: MAIN_COLOR,
-      contrastText: REVERSE_COLOR,
-    },
-    secondary: {
-      main: MAIN_COLOR,
-      contrastText: REVERSE_COLOR,
-    },
-    background: {
-      default: REVERSE_COLOR,
-      paper: REVERSE_COLOR,
-    },
-    text: {
-      primary: '#000000',
-      secondary: '#000000',
-      disabled: '#000000',
-    },
-    divider: '#000000',
-  },
   components: {
     MuiButton: {
       styleOverrides: {
-        root: {
-          color: REVERSE_COLOR,
-        },
         contained: {
-          color: MAIN_COLOR,
-          backgroundColor: REVERSE_COLOR,
+          color: '#FFFFFF',
+          backgroundColor: '#020617',
+          borderColor: '#020617',
         },
         outlined: {
-          color: REVERSE_COLOR,
-          borderColor: REVERSE_COLOR,
-        },
-        text: {
-          color: REVERSE_COLOR,
+          color: '#334155',
+          backgroundColor: '#FFFFFF',
+          borderColor: '#E2E8F0',
         },
       },
     },
