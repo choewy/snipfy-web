@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 
 import {
+  Alert,
   Backdrop,
   Box,
   Button,
@@ -8,7 +9,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   InputAdornment,
   Paper,
@@ -16,26 +16,29 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { CopyAll as CopyAllIcon } from '@mui/icons-material';
+import { CopyAll as CopyAllIcon, Download as DownloadIcon } from '@mui/icons-material';
 
-import { useCreateLinkResultStore } from '../../store/create-link-result.store';
-import { NotiStackEvent } from '../../persistents/events/noti-stack.event';
+import { useCreateLinkStore } from '../../store/create-link.store';
 import { clipboardService } from '../../core/clipboard/clipboard.service';
+import { downloadService } from '../../core/download/download.service';
 
 export class HomeComponent {
   public static LinkModal() {
-    const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkResultStore();
+    const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkStore();
 
     const handleCopyLink = async () => {
       await clipboardService.copyText(linkUrl);
-
-      NotiStackEvent.success('링크가 복사되었습니다.');
     };
 
     const handleCopyQrCode = async () => {
       await clipboardService.copyImage(qrCodeUrl);
+    };
 
-      NotiStackEvent.success('QR 코드가 복사되었습니다.');
+    const handleDownloadQrCode = async () => {
+      const linkId = linkUrl.split('/').pop();
+      const fileName = linkId ? `snipfy-qrcode-${linkId}.png` : 'snipfy-qrcode.png';
+
+      await downloadService.downloadImage(qrCodeUrl, fileName);
     };
 
     if (status === 'error') {
@@ -51,32 +54,80 @@ export class HomeComponent {
     }
 
     return (
-      <Dialog open={open} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">단축 링크 생성</DialogTitle>
-        <DialogContent>
-          <DialogContentText>링크 생성이 완료되었습니다.</DialogContentText>
-          <TextField
-            fullWidth
-            value={linkUrl}
-            slotProps={{
-              input: {
-                readOnly: true,
-                startAdornment: <InputAdornment position="start">URL</InputAdornment>,
-                endAdornment: (
-                  <Tooltip title="링크 복사">
-                    <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
-                      <CopyAllIcon />
-                    </Button>
-                  </Tooltip>
-                ),
-              },
-            }}
-            helperText={expiredAt ? `생성된 링크는 ${expiredAt}에 삭제됩니다.` : undefined}
-          />
-          <img alt="qrcode" src={qrCodeUrl} width={250} height={250} />
-          <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
-            <CopyAllIcon />
-          </Button>
+      <Dialog open={open} aria-describedby="alert-dialog-description">
+        <DialogTitle sx={{ fontSize: 24, fontWeight: 700, textAlign: 'center', color: '#1e293b' }}>링크 생성이 완료되었습니다.</DialogTitle>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            gap: 2,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f8fafc',
+          }}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <TextField
+              size="small"
+              fullWidth
+              value={linkUrl}
+              slotProps={{
+                input: {
+                  readOnly: true,
+                  endAdornment: (
+                    <Tooltip title="링크 복사">
+                      <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
+                        <CopyAllIcon />
+                      </Button>
+                    </Tooltip>
+                  ),
+                },
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                backgroundColor: '#ffffff',
+                borderColor: '#e2e8f0',
+                display: 'flex',
+                padding: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                borderWidth: 1,
+                borderRadius: 5,
+                borderStyle: 'solid',
+              }}
+            >
+              <img alt="qrcode" src={qrCodeUrl} width={200} height={200} />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <Tooltip title="QR코드 이미지 복사">
+                <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
+                  <CopyAllIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="QR코드 이미지 다운로드">
+                <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleDownloadQrCode}>
+                  <DownloadIcon />
+                </Button>
+              </Tooltip>
+            </Box>
+          </Box>
+
+          {expiredAt && (
+            <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+              <Alert variant="outlined" severity="warning" sx={{ width: '100%', alignItems: 'center' }}>
+                {`생성된 링크는 ${expiredAt}에 만료됩니다.`}
+              </Alert>
+              <Alert variant="outlined" severity="info" sx={{ width: '100%', alignItems: 'center' }} action={<Button size="small">로그인</Button>}>
+                로그인하면 링크를 영구 보존할 수 있습니다.
+              </Alert>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions>
           <Button size="small" sx={{ color: '#1e293b' }} onClick={closeModal}>
@@ -88,7 +139,7 @@ export class HomeComponent {
   }
 
   public static LinkForm() {
-    const { create } = useCreateLinkResultStore();
+    const { create } = useCreateLinkStore();
 
     const [url, setUrl] = useState<string>('');
 
@@ -122,15 +173,13 @@ export class HomeComponent {
         <Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: 600 }}>
           <TextField
             fullWidth
+            name="url"
             autoComplete="off"
             placeholder="https://example.com/bla-bla-bla"
             value={url}
             onChange={handleChangeUrl}
             slotProps={{
-              input: {
-                style: { backgroundColor: '#ffffff' },
-                startAdornment: <InputAdornment position="start">URL</InputAdornment>,
-              },
+              input: { startAdornment: <InputAdornment position="start">URL</InputAdornment> },
             }}
           />
           <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: 600 }}>

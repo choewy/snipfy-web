@@ -11,8 +11,8 @@ export type AlertModalStore = {
 
 export const useAlertModalStore = create<AlertModalStore>((set) => ({
   open: false,
-  title: '',
-  message: '',
+  title: 'TEST',
+  message: 'test message',
   onOpen: (title: string, message: string) => set({ open: true, title, message }),
   onClose: () => set({ open: false }),
   reset: () => set({ open: false, title: '', message: '' }),
