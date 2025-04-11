@@ -5,6 +5,7 @@ export default function Layout() {
     <>
       <LayoutComponent.Nav />
       <LayoutComponent.Outlet />
+      <LayoutComponent.Footer />
     </>
   );
 }

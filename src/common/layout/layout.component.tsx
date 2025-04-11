@@ -87,4 +87,12 @@ export class LayoutComponent {
       </Box>
     );
   }
+
+  public static Footer() {
+    return (
+      <footer>
+        <Box sx={{ backgroundColor: '#f8fafc', height: '100px', width: '100%' }}></Box>
+      </footer>
+    );
+  }
 }

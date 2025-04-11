@@ -4,26 +4,40 @@ import { DateTime } from 'luxon';
 import { URL_REGEX } from '../persistents/regex';
 import { NotiStackEvent } from '../persistents/events/noti-stack.event';
 import { configService } from '../core/config/config.service';
-import { snipfySignApiService } from '../api/snipfy/snipfy-api.service';
+import { snipfyApiService } from '../api/snipfy/snipfy-api.service';
 import { qrCodeService } from '../utils/qrcode.service';
 
 export type CreateLinkStore = {
   open: boolean;
   status: 'pending' | 'success' | 'error';
+  url: string;
   linkUrl: string;
   qrCodeUrl: string;
   expiredAt: string | null;
+  change: (url: string) => void;
   create: (url: string) => Promise<void>;
-  reset: () => void;
   closeModal: () => void;
 };
 
 export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
   open: false,
   status: 'pending',
+  url: '',
   linkUrl: '',
   qrCodeUrl: '',
   expiredAt: null,
+  change: (url: string) => {
+    if (
+      ['', 'h', 'ht', 'htt', 'http', 'https', 'http:', 'https:', 'http:/', 'https:/', 'http://', 'https://'].includes(url) ||
+      url.length === 0 ||
+      url.startsWith('http://') ||
+      url.startsWith('https://')
+    ) {
+      return set({ url });
+    }
+
+    set({ url: `https://${url}` });
+  },
   create: async (url: string) => {
     url = url.trim();
 
@@ -41,7 +55,7 @@ export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
 
     set({ open: true, status: 'pending' });
 
-    const createLinkResult = await snipfySignApiService.createLink(url);
+    const createLinkResult = await snipfyApiService.createLink(url);
 
     if (!createLinkResult.ok) {
       switch (createLinkResult.error?.statusCode) {
@@ -63,10 +77,7 @@ export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
 
     set({ open: true, status: 'success', linkUrl, qrCodeUrl, expiredAt });
   },
-  reset: () => {
-    set({ open: false, status: 'pending', linkUrl: '', qrCodeUrl: '', expiredAt: null });
-  },
   closeModal: () => {
-    set({ open: false });
+    set({ open: false, url: '' });
   },
 }));

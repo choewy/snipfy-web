@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Alert,
@@ -24,6 +25,7 @@ import { downloadService } from '../../core/download/download.service';
 
 export class HomeComponent {
   public static LinkModal() {
+    const navigate = useNavigate();
     const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkStore();
 
     const handleCopyLink = async () => {
@@ -39,6 +41,15 @@ export class HomeComponent {
       const fileName = linkId ? `snipfy-qrcode-${linkId}.png` : 'snipfy-qrcode.png';
 
       await downloadService.downloadImage(qrCodeUrl, fileName);
+    };
+
+    const handleLoginPage = () => {
+      closeModal();
+      navigate('/login');
+    };
+
+    const handleCloseModal = () => {
+      closeModal();
     };
 
     if (status === 'error') {
@@ -58,12 +69,13 @@ export class HomeComponent {
         <DialogTitle sx={{ fontSize: 24, fontWeight: 700, textAlign: 'center', color: '#1e293b' }}>링크 생성이 완료되었습니다.</DialogTitle>
         <DialogContent
           sx={{
-            display: 'flex',
             gap: 2,
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#f8fafc',
+            width: 500,
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
@@ -123,14 +135,23 @@ export class HomeComponent {
               <Alert variant="outlined" severity="warning" sx={{ width: '100%', alignItems: 'center' }}>
                 {`생성된 링크는 ${expiredAt}에 만료됩니다.`}
               </Alert>
-              <Alert variant="outlined" severity="info" sx={{ width: '100%', alignItems: 'center' }} action={<Button size="small">로그인</Button>}>
+              <Alert
+                variant="outlined"
+                severity="info"
+                sx={{ width: '100%', alignItems: 'center' }}
+                action={
+                  <Button size="small" onClick={handleLoginPage}>
+                    로그인
+                  </Button>
+                }
+              >
                 로그인하면 링크를 영구 보존할 수 있습니다.
               </Alert>
             </Box>
           )}
         </DialogContent>
         <DialogActions>
-          <Button size="small" sx={{ color: '#1e293b' }} onClick={closeModal}>
+          <Button size="small" sx={{ color: '#1e293b' }} onClick={handleCloseModal}>
             닫기
           </Button>
         </DialogActions>
@@ -139,23 +160,20 @@ export class HomeComponent {
   }
 
   public static LinkForm() {
-    const { create } = useCreateLinkStore();
+    const navigate = useNavigate();
 
-    const [url, setUrl] = useState<string>('');
+    const { url, create, change } = useCreateLinkStore();
 
     const handleChangeUrl = (e: ChangeEvent<HTMLInputElement>) => {
-      const url = e.target.value;
+      change(e.target.value);
+    };
 
-      if (
-        ['', 'h', 'ht', 'htt', 'http', 'https', 'http:', 'https:', 'http:/', 'https:/', 'http://', 'https://'].includes(url) ||
-        url.length === 0 ||
-        url.startsWith('http://') ||
-        url.startsWith('https://')
-      ) {
-        return setUrl(url);
-      }
+    const handleCreateLink = () => {
+      create(url);
+    };
 
-      setUrl(`https://${url}`);
+    const handleLoginPage = () => {
+      navigate('/login');
     };
 
     return (
@@ -183,10 +201,10 @@ export class HomeComponent {
             }}
           />
           <Box sx={{ display: 'flex', gap: 2, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width: 600 }}>
-            <Button variant="contained" color="primary" sx={{ width: 100 }} onClick={() => create(url)}>
+            <Button variant="contained" color="primary" sx={{ width: 100 }} onClick={handleCreateLink}>
               링크생성
             </Button>
-            <Button variant="outlined" color="primary" sx={{ width: 100 }}>
+            <Button variant="outlined" color="primary" sx={{ width: 100 }} onClick={handleLoginPage}>
               로그인
             </Button>
           </Box>
@@ -211,14 +229,6 @@ export class HomeComponent {
       >
         <Box></Box>
       </Paper>
-    );
-  }
-
-  public static Footer() {
-    return (
-      <footer>
-        <Box sx={{ backgroundColor: '#f8fafc', height: '100px', width: '100%' }}></Box>
-      </footer>
     );
   }
 }

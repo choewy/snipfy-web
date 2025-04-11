@@ -85,4 +85,4 @@ export class SnipfyApiService {
   }
 }
 
-export const snipfySignApiService = new SnipfyApiService(AXIOS_INSTANCE);
+export const snipfyApiService = new SnipfyApiService(AXIOS_INSTANCE);

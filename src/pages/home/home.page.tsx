@@ -6,7 +6,6 @@ export default function HomePage() {
       <HomeComponent.LinkModal />
       <HomeComponent.LinkForm />
       <HomeComponent.Dashboard />
-      <HomeComponent.Footer />
     </>
   );
 }

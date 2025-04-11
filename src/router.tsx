@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import Layout from './common/layout/layout';
-import LoginPage from './pages/Login';
-import SignPage from './pages/Sign/Sign';
 import HomePage from './pages/home/home.page';
 import NotFoundPage from './pages/not-found/not-found.page';
+import LoginPage from './pages/login/login.page';
+import RegisterPage from './pages/register/register.page';
+import SignPage from './pages/sign/sign.page';
 
 export const ROUTER = createBrowserRouter(
   [
@@ -18,6 +19,10 @@ export const ROUTER = createBrowserRouter(
         {
           path: 'login',
           element: <LoginPage />,
+        },
+        {
+          path: 'register',
+          element: <RegisterPage />,
         },
         {
           path: 'sign',
