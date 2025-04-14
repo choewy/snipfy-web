@@ -29,6 +29,8 @@ export default function SignPage() {
     }
 
     snipfyCookieService.setTokens(data.accessToken, data.refreshToken);
+
+    navigate('/', { replace: true });
   };
 
   useEffect(() => {

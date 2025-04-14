@@ -14,10 +14,7 @@ export type CreateLinkStore = {
   linkUrl: string;
   qrCodeUrl: string;
   expiredAt: string | null;
-  copied: {
-    link: boolean;
-    qrCode: boolean;
-  };
+  copied: { link: boolean; qrCode: boolean };
   change: (url: string) => void;
   create: (url: string) => Promise<void>;
   closeModal: () => void;
@@ -87,9 +84,7 @@ export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
 
     set({ open: true, status: 'success', linkUrl, qrCodeUrl, expiredAt });
   },
-  closeModal: () => {
-    set({ open: false, url: '' });
-  },
+  closeModal: () => set({ open: false, url: '' }),
   copyLink: () => set({ copied: { link: true, qrCode: false } }),
   copyQrCode: () => set({ copied: { link: false, qrCode: true } }),
 }));
