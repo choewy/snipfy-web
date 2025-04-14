@@ -68,6 +68,19 @@ export class SnipfyApiService {
     });
   }
 
+  async getConnectPageUrl(platform: SignPlatform) {
+    const href = window.location.href;
+    const [protocol, url] = href.split('://');
+    const callbackUrl = `${protocol}://${url.split('/').shift()}/connect`;
+    const currentUrl = `${protocol}://${url}`;
+
+    return this.request<SnipfyGetLoginPageUrlResult>({
+      method: 'POST',
+      url: `/oauth/${platform}/connect`,
+      data: { callbackUrl, currentUrl },
+    });
+  }
+
   async getSignToken(authKey: string) {
     return this.request<SnipfyGetSignTokenResult>({
       method: 'POST',
