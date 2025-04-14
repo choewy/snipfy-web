@@ -115,7 +115,15 @@ export class HomeComponent {
                 borderStyle: 'solid',
               }}
             >
-              <img alt="qrcode" src={qrCodeUrl} width={200} height={200} />
+              <Box
+                sx={{
+                  backgroundImage: `url(${qrCodeUrl})`,
+                  backgroundPosition: 'center',
+                  backgroundSize: 200,
+                  width: 200,
+                  height: 200,
+                }}
+              />
             </Box>
 
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
