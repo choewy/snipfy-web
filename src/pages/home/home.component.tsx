@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -17,7 +17,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { CopyAll as CopyAllIcon, Download as DownloadIcon } from '@mui/icons-material';
+import { CopyAll as CopyAllIcon, Download as DownloadIcon, Check as CheckIcon } from '@mui/icons-material';
 
 import { useCreateLinkStore } from '../../store/create-link.store';
 import { clipboardService } from '../../core/clipboard/clipboard.service';
@@ -26,14 +26,16 @@ import { downloadService } from '../../core/download/download.service';
 export class HomeComponent {
   public static LinkModal() {
     const navigate = useNavigate();
-    const { open, status, linkUrl, qrCodeUrl, expiredAt, closeModal } = useCreateLinkStore();
+    const { open, status, linkUrl, qrCodeUrl, expiredAt, copied, closeModal, copyLink, copyQrCode } = useCreateLinkStore();
 
     const handleCopyLink = async () => {
       await clipboardService.copyText(linkUrl);
+      copyLink();
     };
 
     const handleCopyQrCode = async () => {
       await clipboardService.copyImage(qrCodeUrl);
+      copyQrCode();
     };
 
     const handleDownloadQrCode = async () => {
@@ -89,7 +91,7 @@ export class HomeComponent {
                   endAdornment: (
                     <Tooltip title="링크 복사">
                       <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyLink}>
-                        <CopyAllIcon />
+                        {copied.link ? <CheckIcon /> : <CopyAllIcon />}
                       </Button>
                     </Tooltip>
                   ),
@@ -119,7 +121,7 @@ export class HomeComponent {
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
               <Tooltip title="QR코드 이미지 복사">
                 <Button size="small" sx={{ color: '#1e293b', minWidth: '30px', maxWidth: '30px', width: '30px' }} onClick={handleCopyQrCode}>
-                  <CopyAllIcon />
+                  {copied.qrCode ? <CheckIcon /> : <CopyAllIcon />}
                 </Button>
               </Tooltip>
               <Tooltip title="QR코드 이미지 다운로드">

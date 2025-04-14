@@ -14,9 +14,15 @@ export type CreateLinkStore = {
   linkUrl: string;
   qrCodeUrl: string;
   expiredAt: string | null;
+  copied: {
+    link: boolean;
+    qrCode: boolean;
+  };
   change: (url: string) => void;
   create: (url: string) => Promise<void>;
   closeModal: () => void;
+  copyLink: () => void;
+  copyQrCode: () => void;
 };
 
 export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
@@ -26,6 +32,10 @@ export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
   linkUrl: '',
   qrCodeUrl: '',
   expiredAt: null,
+  copied: {
+    link: false,
+    qrCode: false,
+  },
   change: (url: string) => {
     if (
       ['', 'h', 'ht', 'htt', 'http', 'https', 'http:', 'https:', 'http:/', 'https:/', 'http://', 'https://'].includes(url) ||
@@ -80,4 +90,6 @@ export const useCreateLinkStore = create<CreateLinkStore>((set) => ({
   closeModal: () => {
     set({ open: false, url: '' });
   },
+  copyLink: () => set({ copied: { link: true, qrCode: false } }),
+  copyQrCode: () => set({ copied: { link: false, qrCode: true } }),
 }));
