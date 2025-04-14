@@ -24,10 +24,10 @@ export class LayoutComponent {
       <AppBar
         position="sticky"
         sx={{
-          backgroundColor: '#f8fafc',
           borderBottomWidth,
           borderBottomStyle: 'solid',
           borderBottomColor: '#e2e8f0',
+          backgroundColor: '#f8fafc',
         }}
         elevation={0}
       >
