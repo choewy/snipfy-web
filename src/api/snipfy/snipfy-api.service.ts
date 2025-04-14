@@ -62,9 +62,9 @@ export class SnipfyApiService {
     const callbackUrl = `${protocol}://${url.split('/').shift()}/sign`;
 
     return this.request<SnipfyGetLoginPageUrlResult>({
-      method: 'GET',
+      method: 'POST',
       url: `/oauth/${platform}/login`,
-      params: { callbackUrl },
+      data: { callbackUrl },
     });
   }
 
