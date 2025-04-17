@@ -36,6 +36,6 @@ export const ROUTER = createBrowserRouter(
     },
   ],
   {
-    basename: process.env.PUBLIC_URL,
+    basename: import.meta.env.PUBLIC_URL,
   },
 );
