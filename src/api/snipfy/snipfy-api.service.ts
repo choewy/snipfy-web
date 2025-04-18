@@ -59,25 +59,24 @@ export class SnipfyApiService {
   async getLoginPageUrl(platform: SignPlatform) {
     const href = window.location.href;
     const [protocol, url] = href.split('://');
-    const callbackUrl = `${protocol}://${url.split('/').shift()}/sign`;
+    const redirectUrl = `${protocol}://${url.split('/').shift()}/sign`;
 
     return this.request<SnipfyGetLoginPageUrlResult>({
       method: 'POST',
       url: `/oauth/${platform}/login`,
-      data: { callbackUrl },
+      data: { redirectUrl },
     });
   }
 
   async getConnectPageUrl(platform: SignPlatform) {
     const href = window.location.href;
     const [protocol, url] = href.split('://');
-    const callbackUrl = `${protocol}://${url.split('/').shift()}/connect`;
-    const currentUrl = `${protocol}://${url}`;
+    const redirectUrl = `${protocol}://${url.split('/').shift()}/connect`;
 
     return this.request<SnipfyGetLoginPageUrlResult>({
       method: 'POST',
-      url: `/oauth/${platform}/connect`,
-      data: { callbackUrl, currentUrl },
+      url: `/oauth/${platform}/login`,
+      data: { redirectUrl },
     });
   }
 
